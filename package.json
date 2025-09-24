@@ -1,0 +1,26 @@
+{
+  "name": "movie-magic-softuni",
+  "version": "1.0.0",
+  "description": "SoftUni JS Back-End Project",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uraxlizard/movie-magic-softuni.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/uraxlizard/movie-magic-softuni/issues"
+  },
+  "homepage": "https://github.com/uraxlizard/movie-magic-softuni#readme",
+  "dependencies": {
+    "express": "^5.1.0",
+    "express-handlebars": "^8.0.3",
+    "uuid": "^13.0.0"
+  }
+}
