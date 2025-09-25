@@ -1,32 +1,44 @@
 import Movie from "../models/Movie.js";
+import { Types } from "mongoose";
 
 export default {
     getAllMovies(filter = {}) {
-        return Movie.find(filter);
-    },
-    getMovieById(id) {
-        return Movie.findOne({ _id: id });
-    },
-    createMovie(movie) {
-        movie.rating = Number(movie.rating);
-        const newMovie = new Movie(movie);
-        return newMovie.save();
-    },
-    updateMovie(id, movie) {
-        const existingMovie = this.getMovieById(id);
-        if (!existingMovie) {
-            throw new Error("Movie not found");
+        let query = Movie.find();
+
+        if (filter.title) {
+            query = query.find({ title: { $regex: filter.title, $options: 'i' } });
         }
-        Object.assign(existingMovie, movie);
-        movie.rating = Number(movie.rating);
-        const updatedMovie = new Movie(existingMovie);
-        return updatedMovie.save();
-    },
-    deleteMovie(id) {
-        const existingMovie = this.getMovieById(id);
-        if (!existingMovie) {
-            throw new Error("Movie not found");
+
+        if (filter.genre) {
+            query = query.find({ genre: { $regex: new RegExp(`^${filter.genre}$`), $options: 'i' } });
         }
-        return existingMovie.delete();
+
+        if (filter.year) {
+            query = query.where('year').equals(filter.year);
+        }
+
+        return query;
+    },
+
+    getMovieOne(movieId) {
+        return Movie.findById(movieId);
+    },
+
+    getMovieOneDetailed(movieId) {
+        return this.getMovieOne(movieId).populate('casts');
+    },
+
+    createMovie(movieData) {
+        movieData.rating = Number(movieData.rating);
+
+        return Movie.create(movieData);
+    },
+
+    async attachCast(movieId, castId) {
+        if (!castId || castId === 'none' || !Types.ObjectId.isValid(castId)) {
+            return;
+        }
+
+        return Movie.findByIdAndUpdate(movieId, { $addToSet: { casts: castId } });
     }
 }

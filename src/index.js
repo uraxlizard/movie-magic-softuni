@@ -1,12 +1,32 @@
 import express from "express";
 import handlebars from "express-handlebars";
+import mongoose from "mongoose";
+
+
 import routes from "./routes.js";
 
 const app = express();
 
+// Connect to MongoDB
+const url = 'mongodb://localhost:27017/movie-magic-softuni';
+
+try {
+    await mongoose.connect(url, {
+        dbName: "movie-magic-softuni",
+    });
+
+    console.log("Connected to MongoDB");
+} catch (error) {
+    console.error("Error connecting to MongoDB", error);
+}
+
 // Setup handlebars
 app.engine("hbs", handlebars.engine({
     extname: "hbs",
+    runtimeOptions: {
+        allowProtoMethodsByDefault: true,
+        allowProtoPropertiesByDefault: true, 
+    }
 }));
 
 app.set("view engine", "hbs");
