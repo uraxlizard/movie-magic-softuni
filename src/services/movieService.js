@@ -1,5 +1,4 @@
 import Movie from "../models/Movie.js";
-import { Types } from "mongoose";
 
 export default {
     getAllMovies(filter = {}) {
@@ -28,17 +27,23 @@ export default {
         return this.getMovieOne(movieId).populate('casts');
     },
 
-    createMovie(movieData) {
-        movieData.rating = Number(movieData.rating);
-
-        return Movie.create(movieData);
+    createMovie(movieData, userId) {
+        return Movie.create({
+            ...movieData,
+            rating: Number(movieData.rating),
+            creator: userId,
+        });
     },
 
     async attachCast(movieId, castId) {
-        if (!castId || castId === 'none' || !Types.ObjectId.isValid(castId)) {
-            return;
-        }
+        return Movie.findByIdAndUpdate(movieId, { $push: { casts: castId } });
+    },
 
-        return Movie.findByIdAndUpdate(movieId, { $addToSet: { casts: castId } });
+    deleteMovie(movieId) {
+        return Movie.findByIdAndDelete(movieId);
+    },
+
+    editMovie(movieId, movieData) {
+        return Movie.findByIdAndUpdate(movieId, movieData);
     }
 }
